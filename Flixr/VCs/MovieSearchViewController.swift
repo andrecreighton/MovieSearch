@@ -82,9 +82,7 @@ extension MovieSearchViewController : UITableViewDelegate, UITableViewDataSource
     return 145
   }
   
-  
 }
-
 
 extension MovieSearchViewController : UISearchBarDelegate {
   
@@ -97,21 +95,19 @@ extension MovieSearchViewController : UISearchBarDelegate {
      // TODO: Funtionality
       
       let params = ["query" : searchResultValue]
-      movieDB.getInfoWithEndPoint(endpoint: .movieSearch, params: params) { (isSuccessful, MOVIES) in
-        
-        if isSuccessful {
-          //print(MOVIES)
-          //self.arrayOfMovies = MOVIES
-          self.movieViewModels = MOVIES.map({return MovieViewModel(movie: $0)})
+      movieDB.getInfoWithEndPoint(endpoint: .movieSearch, params: params) { (result) in
+          
+        switch result {
+        case .success(let movies):
+          self.movieViewModels = movies.map({return MovieViewModel(movie: $0)})
           DispatchQueue.main.async {
             self.movieListTableView.reloadData()
             self.animatedFrontView.alpha = 0
             self.movieSearchBar.resignFirstResponder()
           }
-        }else{
-          print("didn't work")
+        case .failure(let err):
+          print(err.localizedDescription)
         }
-        
       }
     }
     

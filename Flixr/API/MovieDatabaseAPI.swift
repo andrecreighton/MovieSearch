@@ -42,9 +42,7 @@ struct MovieDatabase {
   }
   
   
-  
-  
-  mutating func getInfoWithEndPoint(endpoint :Endpoint, params:[String : String]?, completionHandler: @escaping(Bool, [Movie]) ->()) {
+  mutating func getInfoWithEndPoint(endpoint :Endpoint, params:[String : String]?, completionHandler: @escaping(Result<[Movie], Error>) ->()) {
     
     var arr : [Movie] = []
     
@@ -66,13 +64,12 @@ struct MovieDatabase {
       
       if let error = error {
         print(error.localizedDescription)
-        completionHandler(false, [])
+        completionHandler(.failure(error))
+        
       }else{
         
         guard let data = data else {
-          DispatchQueue.main.async {
-            completionHandler(false, [])
-          }
+          print("cant convert data")
           return
         }
         
@@ -89,7 +86,7 @@ struct MovieDatabase {
             print(movieInst.title)
             arr.append(movieInst)
           }
-          completionHandler(true, arr)
+          completionHandler(.success(arr))
         }catch{
           print(error.localizedDescription)
           print("Cannot parse JSON")

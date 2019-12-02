@@ -32,22 +32,50 @@ class MainFeedViewController: UIViewController {
 
   
   func fetchData(_ ep : MovieDatabase.Endpoint){
-    
-      movieDB.getInfoWithEndPoint(endpoint: ep, params: nil) {[weak self] (success, arr) in
-        guard let self = self else{return}
-        if success {
-         // print("movies : \(arr)")
-          self.movieViewModels.removeAll()
-          self.movieViewModels = arr.map({return MovieViewModel(movie: $0)})
-          DispatchQueue.main.async {
-              self.movieTableView.reloadData()
-          }
-        }else{
-        print("nope")
+        
+    movieDB.getInfoWithEndPoint(endpoint: ep, params: nil) { (result) in
+      switch result {
+      case .success(let movies):
+        self.movieViewModels.removeAll()
+        self.movieViewModels = movies.map({return MovieViewModel(movie: $0)})
+        DispatchQueue.main.async {
+          self.movieTableView.reloadData()
         }
-      
+      case .failure(let err):
+        print(err)
+        self.alertTroubleWithFetch(err.localizedDescription)
+        
       }
+    }
   }
+  
+  func alertTroubleWithFetch(_ err: String){
+  
+    let alertVC = UIAlertController(title: "Uh-oh", message: err, preferredStyle: .actionSheet)
+    
+    let ok = UIAlertAction(title: "Okay", style: .default, handler: nil)
+    
+    alertVC.addAction(ok)
+    present(alertVC, animated: true, completion: nil)
+  }
+  
+//  func fetchData(_ ep : MovieDatabase.Endpoint){
+//
+//      movieDB.getInfoWithEndPoint(endpoint: ep, params: nil) {[weak self] (success, arr) in
+//        guard let self = self else{return}
+//        if success {
+//         // print("movies : \(arr)")
+//          self.movieViewModels.removeAll()
+//          self.movieViewModels = arr.map({return MovieViewModel(movie: $0)})
+//          DispatchQueue.main.async {
+//              self.movieTableView.reloadData()
+//          }
+//        }else{
+//        print("nope")
+//        }
+//
+//      }
+//  }
   
   @IBAction func segmentedTouched(_ sender: Any) {
     
