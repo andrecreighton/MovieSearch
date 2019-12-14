@@ -80,6 +80,8 @@ struct MovieDatabase {
           let jsonObject = json as? [String: Any] ?? [:]
           let resultsArrayOfObjects = jsonObject["results"] as? [Any] ?? []
           
+          print("results array:  \(resultsArrayOfObjects.count)" )
+          
           for movieObject in resultsArrayOfObjects {
             let dict = movieObject as! [String: Any]
             let movieInst = Movie(dict)

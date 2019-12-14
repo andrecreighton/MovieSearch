@@ -101,6 +101,11 @@ extension MovieSearchViewController : UISearchBarDelegate {
         case .success(let movies):
           self.movieViewModels = movies.map({return MovieViewModel(movie: $0)})
           DispatchQueue.main.async {
+              
+            if self.movieViewModels.count == 0 {
+              self.noResultsFound()
+            }
+            
             self.movieListTableView.reloadData()
             self.animatedFrontView.alpha = 0
             self.movieSearchBar.resignFirstResponder()
@@ -121,6 +126,21 @@ extension MovieSearchViewController : UISearchBarDelegate {
     
     searchBar.resignFirstResponder()
     searchBar.text = ""
+    
+  }
+  
+  func noResultsFound(){
+    
+    let alertVC = UIAlertController(title: "Sorry", message: "No Results Found.", preferredStyle: .alert)
+    
+    let okAction = UIAlertAction(title: "Okay", style: .default) { (_) in
+      
+      self.movieSearchBar.becomeFirstResponder()
+    }
+
+    alertVC.addAction(okAction)
+    present(alertVC, animated: true, completion: nil)
+    
     
   }
   
